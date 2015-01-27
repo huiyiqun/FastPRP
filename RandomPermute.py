@@ -21,6 +21,18 @@ def cached(f):
     g.ret = None
     return g
 
+def uint2bytes(uint, length):
+    ret = [0] * length
+    for i in range(length):
+        ret[i] = uint & 255
+        uint >>= 8
+        if uint == 0:
+            break
+    else:
+        print(uint, length)
+        raise InputNotInRange()
+    return bytes(reversed(ret))
+
 
 class BitArray(object):
     '''
@@ -162,7 +174,7 @@ class RandomBits(object):
         if index not in self._cache:
             # bytes must conserve more space than BitArray
             self._cache[index] = self.gen.encrypt(
-                BitArray(uint=index, length=self.STRING_LENGTH).bytes)
+                uint2bytes(index, self.STRING_LENGTH >> 3))
         return BitArray(bytes=self._cache[index])
 
     def count(self, value, start, length):
