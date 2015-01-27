@@ -21,6 +21,7 @@ def cached(f):
     g.ret = None
     return g
 
+
 def uint2bytes(uint, length):
     ret = [0] * length
     for i in range(length):
@@ -173,9 +174,11 @@ class RandomBits(object):
     def _get_block(self, index):
         if index not in self._cache:
             # bytes must conserve more space than BitArray
-            self._cache[index] = self.gen.encrypt(
+            # but init BitArray with bytes is CPU-expensive
+            block = self.gen.encrypt(
                 uint2bytes(index, self.STRING_LENGTH >> 3))
-        return BitArray(bytes=self._cache[index])
+            self._cache[index] = BitArray(bytes=block)
+        return self._cache[index]
 
     def count(self, value, start, length):
         '''
