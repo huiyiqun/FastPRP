@@ -1,6 +1,7 @@
-from bitstring import BitArray
+# from bitstring import BitArray
 from Crypto.Cipher import DES
 from datetime import datetime
+from functools import wraps
 
 
 class InputNotInRange(Exception):
@@ -11,13 +12,90 @@ class NotImplemented(Exception):
     pass
 
 
-#class BitArray(object):
-    #'''
-    #For BitArray from bitstring is not efficient,
-    #I try to re-implement a version with same interface
-    #but less functions.
-    #'''
-    #pass
+def cached(f):
+    @wraps(f)
+    def g(*args, **kwargs):
+        if g.ret is None:
+            ret = f(*args, **kwargs)
+        return ret
+    g.ret = None
+    return g
+
+
+class BitArray(object):
+    '''
+    For BitArray from bitstring is not efficient,
+    I try to re-implement a version with same interface
+    but less functions.
+
+    Note:
+        This object is readonly, that is, never change the
+        content after initialization.
+    '''
+    def __init__(self, length=None, uint=None, bytes=None, _data=None):
+        if uint is not None and length is not None:
+            self._data = [False] * length
+            for i in range(length):
+                self._data[i] = (uint & 1 == 1)
+                uint >>= 1
+                if uint == 0:
+                    break
+            else:
+                raise InputNotInRange()
+        elif bytes is not None:
+            self._data = []
+            for b in reversed(bytes):
+                single_byte = [False] * 8
+                for i in range(8):
+                    single_byte[i] = (b & 1 == 1)
+                    b >>= 1
+                    if b == 0:
+                        break
+                self._data += single_byte
+        elif _data is not None:
+            self._data = _data
+
+        # tuple is readonly and not always copys itself when sliced
+        # Maybe list is fast?
+        self._data = tuple(self._data)
+        self.length = len(self._data)
+
+    @property
+    @cached
+    def bytes(self):
+        point = 0
+        ret = []
+        while point < len(self._data):
+            byte = self._data[point: point+8]
+            value = 0
+            step = 1
+            for i in range(len(byte)):
+                if byte[i]:
+                    value += step
+                step <<= 1
+            ret.append(value)
+            point += 8
+        return bytes(reversed(ret))
+
+    @property
+    @cached
+    def _count_one(self):
+        return sum(self._data)
+
+    def count(self, value):
+        if value:
+            return self._count_one
+        else:
+            return self.length - self._count_one
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return BitArray(_data=self._data[key])
+        return self._data[key]
+
+    def __add__(self, other):
+        if isinstance(other, BitArray):
+            return BitArray(_data=self._data+other._data)
 
 
 class RandomBits(object):
@@ -99,7 +177,7 @@ class RandomBits(object):
             # convert counting for zero to counting for one
             return length - self.count(1, start, length)
         interval = self._counter_cached_interval
-        while (len(self._counter_cache) - 1)* interval < end:
+        while (len(self._counter_cache) - 1) * interval < end:
             now_length = len(self._counter_cache)
             now = self._counter_cache[-1]
             self._counter_cache.append(
@@ -161,7 +239,7 @@ if __name__ == '__main__':
         start = 10 ** (N - 1)
         length = end - start
 
-        rp = RandomPermuter(1008611, end - start, start, 500)
+        rp = RandomPermuter(1008611, end - start, start, 100)
 
         print('First time')
         start_t = datetime.now()
