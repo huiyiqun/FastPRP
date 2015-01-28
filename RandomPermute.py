@@ -245,7 +245,8 @@ class RandomPermuter(object):
 if __name__ == '__main__':
     from random import random
 
-    for N in range(6, 10):
+    # test speed
+    for N in range(2, 7):
         end = 10 ** N
         start = 10 ** (N - 1)
         length = end - start
@@ -265,3 +266,17 @@ if __name__ == '__main__':
         end_t = datetime.now()
         print('%d bit permuted takes %s' % (N, end_t - start_t))
         print('\n')
+
+    # test validity
+    start = 512
+    end = 4096
+    rp = RandomPermuter(10001, end - start, start, 128)
+    found = set()
+    for i in range(start, end):
+        p = rp.permute(i)
+        print('%d --> %d' % (i, p))
+        if not start <= p < end:
+            raise Exception('Output is not in given range')
+        if p in found:
+            raise Exception('Output is not unique')
+        found.add(p)
