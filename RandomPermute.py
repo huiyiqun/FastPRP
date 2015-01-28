@@ -35,6 +35,29 @@ def uint2bytes(uint, length):
     return bytes(reversed(ret))
 
 
+def uint2bools(uint, length):
+    ret = [False] * length
+    for i in range(length):
+        ret[i] = (uint & 1 == 1)
+        uint >>= 1
+        if uint == 0:
+            return ret
+    raise InputNotInRange()
+
+
+def bytes2bools(bytes):
+    ret = []
+    for b in reversed(bytes):
+        single_byte = [False] * 8
+        for i in range(8):
+            single_byte[i] = (b & 1 == 1)
+            b >>= 1
+            if b == 0:
+                break
+        ret += single_byte
+    return ret
+
+
 class BitArray(object):
     '''
     For BitArray from bitstring is not efficient,
@@ -47,24 +70,9 @@ class BitArray(object):
     '''
     def __init__(self, length=None, uint=None, bytes=None, _data=None):
         if uint is not None and length is not None:
-            self._data = [False] * length
-            for i in range(length):
-                self._data[i] = (uint & 1 == 1)
-                uint >>= 1
-                if uint == 0:
-                    break
-            else:
-                raise InputNotInRange()
+            self._data = uint2bools(uint, length)
         elif bytes is not None:
-            self._data = []
-            for b in reversed(bytes):
-                single_byte = [False] * 8
-                for i in range(8):
-                    single_byte[i] = (b & 1 == 1)
-                    b >>= 1
-                    if b == 0:
-                        break
-                self._data += single_byte
+            self._data = bytes2bools(bytes)
         elif _data is not None:
             self._data = _data
 
