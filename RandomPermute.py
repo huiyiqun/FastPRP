@@ -98,7 +98,7 @@ class RandomBits(object):
     # string per operation
     STRING_LENGTH = 64
 
-    def __init__(self, key, counter_cached_interval=10):
+    def __init__(self, key, counter_cached_interval=128):
         self.key = BitArray(uint=key, length=self.KEY_LENGTH)
         self.gen = DES.new(self.key.bytes)
 
@@ -211,7 +211,7 @@ class RandomPermuter(object):
         >>> rp.permute(532)
         123
     '''
-    def __init__(self, key, length, start=0, counter_cached_interval=10):
+    def __init__(self, key, length, start=0, counter_cached_interval=128):
         self.random_bits = RandomBits(key, counter_cached_interval)
         self.start = start
         self.length = length
