@@ -11,6 +11,7 @@ How To
 
 1. Compile the cython module
 
+
     python setup.py build_ext --inplace
 
 or simply use python
@@ -19,8 +20,9 @@ or simply use python
 
 2. There is two modules in my project now:
 
-  * `RandomPermute` in RandomPermute.py (aimed to cryptology-safe)
-  * `ArbitaryWidthRandomPermute` in ArbitaryWidthRandomPermute.py
+
+  * `RandomPermute` in `RandomPermute.py` (aimed to cryptology-safe)
+  * `ArbitaryWidthRandomPermute` in `ArbitaryWidthRandomPermute.py`
 
 test units for either module is in the source code. just run it:
 
