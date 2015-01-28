@@ -2,6 +2,7 @@
 from Crypto.Cipher import DES
 from datetime import datetime
 from functools import wraps
+from bytes2bools import bytes2bools
 
 
 class InputNotInRange(Exception):
@@ -45,17 +46,17 @@ def uint2bools(uint, length):
     raise InputNotInRange()
 
 
-def bytes2bools(bytes):
-    ret = []
-    for b in reversed(bytes):
-        single_byte = [False] * 8
-        for i in range(8):
-            single_byte[i] = (b & 1 == 1)
-            b >>= 1
-            if b == 0:
-                break
-        ret += single_byte
-    return ret
+#def bytes2bools(bytes):
+    #ret = []
+    #for b in reversed(bytes):
+        #single_byte = [False] * 8
+        #for i in range(8):
+            #single_byte[i] = (b & 1 == 1)
+            #b >>= 1
+            #if b == 0:
+                #break
+        #ret += single_byte
+    #return ret
 
 
 class BitArray(object):
