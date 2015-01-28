@@ -109,6 +109,9 @@ class BitArray(object):
         return self._data[key]
 
     def __add__(self, other):
+        '''
+        This is inefficient for both RAM and CPU , avoid this.
+        '''
         if isinstance(other, BitArray):
             return BitArray(_data=self._data+other._data)
 
@@ -148,7 +151,7 @@ class RandomBits(object):
             end = key.stop
             step = 1 if key.step is None else key.step
             if step != 1:
-                raise NotImplemented()
+                raise NotImplemented
             start_index, start_offset = self._div_into_block(start)
             end_index, end_offset = self._div_into_block(end)
 
@@ -182,6 +185,27 @@ class RandomBits(object):
             self._cache[index] = BitArray(bytes=block)
         return self._cache[index]
 
+    def _count(self, value, start, length):
+        '''
+        REALLY count without access to cache.
+        '''
+        end = start + length
+        start_block, start_offset = self._div_into_block(start)
+        end_block, end_offset = self._div_into_block(end)
+        if start_block == end_block:
+            # In one block
+            return (self._get_block(start_block)[start_offset:end_offset]
+                        .count(value))
+        ret = 0
+        # First block
+        ret += self._get_block(start_block)[start_offset:].count(value)
+        # Last block
+        ret += self._get_block(end_block)[:end_offset].count(value)
+        # other blocks
+        for i in range(start_block + 1, end_block):
+            ret += self._get_block(i).count(value)
+        return ret
+
     def count(self, value, start, length):
         '''
         Return count of total number of either zero of one bits
@@ -198,13 +222,14 @@ class RandomBits(object):
             now_length = len(self._counter_cache)
             now = self._counter_cache[-1]
             self._counter_cache.append(
-                now + self[(now_length-1)*interval:now_length*interval].count(1)
-            )
+                now + self._count(1, (now_length-1)*interval, interval))
         cached_start = start // interval
         cached_end = end // interval
         ret = self._counter_cache[cached_end] - self._counter_cache[cached_start]
-        ret = ret - self[cached_start * interval: start].count(1)
-        ret = ret + self[cached_end * interval: end].count(1)
+        ret = ret - self._count(1, cached_start * interval,
+                                start - cached_start * interval)
+        ret = ret + self._count(1, cached_end * interval,
+                                end - cached_end * interval)
         return ret
 
 
