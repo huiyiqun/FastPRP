@@ -48,6 +48,28 @@ class ArbitaryWidthRandomPermute(object):
         return ret
 
 if __name__ == '__main__':
-    awrp = ArbitaryWidthRandomPermute(1008611, 13)
-    for i in range(100):
-        print('%d -->' % i, awrp.permute(i))
+    from datetime import datetime
+
+    # test speed
+    for N in range(2, 30):
+        start_t = datetime.now()
+        awrp = ArbitaryWidthRandomPermute(1008611, N)
+        for i in range(100):
+            awrp.permute(i)
+        end_t = datetime.now()
+        print('%d bit permuted (100 times) takes %s' % (N, end_t - start_t))
+
+    # test validity
+    test_bits = 5
+    awrp = ArbitaryWidthRandomPermute(1008611, test_bits)
+    found = set()
+    for i in range(10 ** test_bits):
+        res = awrp.permute(i)
+        print('%d -->' % i, res)
+        if res is None:
+            continue
+        if res in found:
+            raise Exception('Output is not unique')
+        if not 10 ** (test_bits-1) <= res < 10 ** test_bits:
+            raise Exception('Output is not in given range')
+        found.add(res)
