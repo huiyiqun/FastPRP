@@ -11,15 +11,21 @@ class ArbitaryWidthRandomPermute(object):
         >>> awrp.permute(2015)
     '''
 
-    _grouped_by = 5
+    _grouped_by = 4
 
     def __init__(self, key, width, keeped=None):
         self.keeped = keeped if keeped is not None else (lambda x: False)
         self.width = width
         self.key = key
+        self.random_permuters = dict()
 
     def _in_range(self, output):
         return 10 ** (self.width - 1) <= output < 10 ** self.width
+
+    def _get_permuter(self, key, width):
+        if (key, width) not in random_permuters:
+            random_permuters[(key, width)] = RandomPermuter(output, grp)
+        return random_permuters[(key, width)]
 
     def permute(self, input):
         ret = 0
@@ -42,6 +48,6 @@ class ArbitaryWidthRandomPermute(object):
         return ret
 
 if __name__ == '__main__':
-    awrp = ArbitaryWidthRandomPermute(1008611, 10)
+    awrp = ArbitaryWidthRandomPermute(1008611, 13)
     for i in range(100):
         print('%d -->' % i, awrp.permute(i))
