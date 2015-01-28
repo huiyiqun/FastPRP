@@ -1,0 +1,2 @@
+class InputNotInRange(Exception):
+    pass

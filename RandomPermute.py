@@ -2,15 +2,8 @@
 from Crypto.Cipher import DES
 from datetime import datetime
 from functools import wraps
-from bytes2bools import bytes2bools
-
-
-class InputNotInRange(Exception):
-    pass
-
-
-class NotImplemented(Exception):
-    pass
+from convert import bytes2bools, uint2bytes, uint2bools
+from exception import InputNotInRange
 
 
 def cached(f):
@@ -23,27 +16,27 @@ def cached(f):
     return g
 
 
-def uint2bytes(uint, length):
-    ret = [0] * length
-    for i in range(length):
-        ret[i] = uint & 255
-        uint >>= 8
-        if uint == 0:
-            break
-    else:
-        print(uint, length)
-        raise InputNotInRange()
-    return bytes(reversed(ret))
+#def uint2bytes(uint, length):
+    #ret = [0] * length
+    #for i in range(length):
+        #ret[i] = uint & 255
+        #uint >>= 8
+        #if uint == 0:
+            #break
+    #else:
+        #print(uint, length)
+        #raise InputNotInRange()
+    #return bytes(reversed(ret))
 
 
-def uint2bools(uint, length):
-    ret = [False] * length
-    for i in range(length):
-        ret[i] = (uint & 1 == 1)
-        uint >>= 1
-        if uint == 0:
-            return ret
-    raise InputNotInRange()
+#def uint2bools(uint, length):
+    #ret = [False] * length
+    #for i in range(length):
+        #ret[i] = (uint & 1 == 1)
+        #uint >>= 1
+        #if uint == 0:
+            #return ret
+    #raise InputNotInRange()
 
 
 #def bytes2bools(bytes):
@@ -258,12 +251,12 @@ class RandomPermuter(object):
 if __name__ == '__main__':
     from random import random
 
-    for N in range(3, 10):
+    for N in range(6, 10):
         end = 10 ** N
         start = 10 ** (N - 1)
         length = end - start
 
-        rp = RandomPermuter(1008611, end - start, start, 100)
+        rp = RandomPermuter(1008611, end - start, start, 10000)
 
         print('First time')
         start_t = datetime.now()
