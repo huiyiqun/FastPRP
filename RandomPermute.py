@@ -5,6 +5,8 @@ from functools import wraps
 from convert import bytes2bools, uint2bytes, uint2bools
 from exception import InputNotInRange
 
+__without_cache_of_encrypto__ = True
+
 
 def cached(f):
     @wraps(f)
@@ -141,6 +143,9 @@ class RandomBits(object):
         return index // self.STRING_LENGTH, index % self.STRING_LENGTH
 
     def _get_block(self, index):
+        if __without_cache_of_encrypto__:
+            return BitArray(bytes=self.gen.encrypt(
+                uint2bytes(index, self.STRING_LENGTH >> 3)))
         if index not in self._cache:
             # bytes must conserve more space than BitArray
             # but init BitArray with bytes is CPU-expensive
@@ -245,7 +250,7 @@ if __name__ == '__main__':
         start = 10 ** (N - 1)
         length = end - start
 
-        rp = RandomPermuter(1008611, end - start, start, 10000)
+        rp = RandomPermuter(1008611, end - start, start, 128)
 
         print('First time')
         start_t = datetime.now()
