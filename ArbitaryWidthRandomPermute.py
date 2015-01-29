@@ -73,3 +73,4 @@ if __name__ == '__main__':
         if not 10 ** (test_bits-1) <= res < 10 ** test_bits:
             raise Exception('Output is not in given range')
         found.add(res)
+    print('%d unique number generated.' % len(found))
