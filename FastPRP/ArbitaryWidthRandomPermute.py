@@ -1,4 +1,4 @@
-from RandomPermute import RandomPermuter
+from .RandomPermute import RandomPermuter
 
 
 class ArbitaryWidthRandomPermute(object):

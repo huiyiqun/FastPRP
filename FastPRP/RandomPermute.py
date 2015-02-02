@@ -2,8 +2,8 @@
 from Crypto.Cipher import DES
 from datetime import datetime
 from functools import wraps
-from convert import bytes2bools, uint2bytes, uint2bools
-from exception import InputNotInRange
+from .convert import bytes2bools, uint2bytes, uint2bools
+from .exception import InputNotInRange
 
 __without_cache_of_encrypto__ = True
 

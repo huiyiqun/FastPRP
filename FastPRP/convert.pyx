@@ -1,4 +1,4 @@
-from exception import InputNotInRange
+from .exception import InputNotInRange
 
 def bytes2bools(bytes):
     ret = []
