@@ -69,7 +69,7 @@ if __name__ == '__main__':
         #print('%d -->' % i, res)
         if res is None:
             return
-        if found:
+        if found is not None:
             if hasattr(found, 'lock'):
                 with found.lock:
                     if res in found:
