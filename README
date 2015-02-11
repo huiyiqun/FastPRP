@@ -9,26 +9,39 @@ Description
 How To
 ======
 
-1. Compile the cython module
+1. Compile the cython module(Need Cython, install with pip)
 
-
+```
     python setup.py build_ext --inplace
-
-or simply use python
-
+```
+or simply use python(slow)
+```
     cp convert.pyx convert.py
-
+```
 2. There is two modules in my project now:
 
 
   * `RandomPermute` in `RandomPermute.py` (aimed to cryptology-safe)
   * `ArbitaryWidthRandomPermute` in `ArbitaryWidthRandomPermute.py`
 
-test units for either module is in the source code. just run it:
+test units for either module is in the source code. just run it with:
+```
+    python -m FastPRP/RandomPermute
+    python -m FastPRP/ArbitaryWidthRandomPermute
+```
 
-    python RandomPermute.py
-    python ArbitaryWidthRandomPermute.py
+Install as Module
+=================
 
+1. Install Cython
+```
+    pip install cython
+```
+
+1. Install module
+```
+    python setup.py install
+```
 TODO
 ====
 
