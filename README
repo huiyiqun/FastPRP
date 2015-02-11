@@ -33,3 +33,4 @@ TODO
 ====
 
 1. There is not tutorist. Just see the source code.
+2. AribitaryWidthRandomPermuter: Do NOT use output of last loop directly as key.
